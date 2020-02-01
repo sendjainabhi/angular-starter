@@ -12,7 +12,14 @@ import { Item } from './items.gql';
 })
 export class AppComponent implements OnInit {
   title = 'AngularRX';
-  items = [];//Observable<Item[]>;
+  items: any;//Observable<Item[]>;
+  columnDefs = [
+    {headerName: 'Make', field: 'title' },
+    {headerName: 'Model', field: 'description' },
+    {headerName: 'Price', field: 'price'}
+];
+
+
   constructor(private apollo: Apollo){
 
   }
@@ -32,8 +39,6 @@ export class AppComponent implements OnInit {
       `,
     })
     .valueChanges.subscribe(result => {
-      debugger;
-      console.log(result.data);
       this.items = result.data['items'];
       console.log(this.items);
     });
