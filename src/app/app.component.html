@@ -8,10 +8,11 @@
   </mat-list>-->
   <h3>Items - Atrium</h3>
   <ag-grid-angular
-  style="width: 500px; height: 500px;"
+  style="width: 1000px; height: 500px;"
   class="ag-theme-balham"
   [rowData]="items"
   [columnDefs]="columnDefs"
+  [gridOptions]= "gridOptions"
   rowSelection="multiple"
   >
 </ag-grid-angular>

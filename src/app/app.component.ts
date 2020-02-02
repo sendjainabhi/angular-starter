@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Item } from './items.gql';
+import { GridOptions } from 'ag-grid-community';
 
 @Component({
   selector: 'app-root',
@@ -16,15 +17,19 @@ export class AppComponent implements OnInit {
   columnDefs = [
     {headerName: 'Make', field: 'title' },
     {headerName: 'Model', field: 'description' },
-    {headerName: 'Price', field: 'price'}
+    {headerName: 'Price', field: 'price'},
+    {headerName: 'Edit', field: 'edit', cellRenderer: this.editCellRenderer,},
+    {headerName: 'Delete', field: 'delete', cellRenderer: this.deleteCellRenderer,},
 ];
-
+gridOptions: GridOptions;
 
   constructor(private apollo: Apollo){
 
   }
 
   ngOnInit(){
+
+  
    this.apollo
     .watchQuery({
       query: gql`
@@ -42,6 +47,19 @@ export class AppComponent implements OnInit {
       this.items = result.data['items'];
       console.log(this.items);
     });
+  }
+  editCellRenderer() {
+    var eGui = document.createElement("span");
+    var imgForMood = '/assets/icons/edit.png';
+    eGui.innerHTML = '<img width="20px" src="' + imgForMood + '" />';
+    return eGui;
+  }
+
+  deleteCellRenderer() {
+    var eGui = document.createElement("span");
+    var imgForMood = '/assets/icons/delete.png';
+    eGui.innerHTML = '<img width="20px" src="' + imgForMood + '" />';
+    return eGui;
   }
 
 }
