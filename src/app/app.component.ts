@@ -3,7 +3,7 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Item, DELETE_ITEM_MUTATION, CREATE_ITEM_MUTATION } from './items.gql';
+import { Item, DELETE_ITEM_MUTATION, CREATE_ITEM_MUTATION, UPDATE_ITEM_MUTATION, GET_ALL_ITEMS } from './items.gql';
 import { GridOptions } from 'ag-grid-community';
 import { NgForm } from '@angular/forms';
 
@@ -34,16 +34,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.apollo
       .watchQuery({
-        query: gql`
-        {
-          items{
-            title,
-            id,
-            price,
-            description
-          }
-        }
-      `,
+        query: GET_ALL_ITEMS
       })
       .valueChanges.subscribe(result => {
         this.items = result.data['items'];
@@ -72,12 +63,28 @@ export class AppComponent implements OnInit {
           title: form.value.title,
           price: parseInt(form.value.price),
           description: form.value.description
-        }
+        },
+        refetchQueries: [{
+          query: GET_ALL_ITEMS
+        }]
       }).subscribe((response) => {
       });
       // Need to call Add service request
     } else if (this.actionType === 'Update') {
+      this.apollo.mutate<any>({
+        mutation: UPDATE_ITEM_MUTATION,
+        variables: {
+          id:"5e3890ff5942863f5c9daf50",
+          title: form.value.title,
+          price: parseInt(form.value.price),
+          description: form.value.description
+        },
+        refetchQueries: [{
+          query: GET_ALL_ITEMS
+        }]
+      }).subscribe((response) => {
 
+      });
     }
     this.onResetForm();
   }
@@ -89,7 +96,10 @@ export class AppComponent implements OnInit {
           mutation: DELETE_ITEM_MUTATION,
           variables: {
             id: evt.data.id
-          }
+          },
+          refetchQueries: [{
+            query: GET_ALL_ITEMS
+          }]
         }).subscribe((response) => {
         });
         break;

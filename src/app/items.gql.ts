@@ -32,5 +32,27 @@ mutation createItemMutation($title:String!, $price: Int!, $description: String!)
     id
   }
 }
+`;
 
+export const UPDATE_ITEM_MUTATION = gql`
+mutation updateItemMutation($id:String!, $title:String!, $price: Int!, $description: String!){
+  updateItem(id: $id, input:{title: $title, price: $price, description: $description}){
+    title
+    price
+    description
+    id
+  }
+}
+`;
+
+export const GET_ALL_ITEMS =  gql`
+query getallitemsQuery
+{
+  items{
+    title,
+    id,
+    price,
+    description
+  }
+}
 `;
