@@ -1,24 +1,40 @@
 <div class="wrapper" fxLayout="column" fxLayoutAlign="start stretch">
-
-  <!--<h3>Simple lists</h3>
-  <mat-list *ngFor="let item of items">
-    <mat-list-item><b> Title :</b>{{item.title}} </mat-list-item>
-    <mat-list-item><b> Price :</b>{{item.price}} </mat-list-item>
-    <mat-list-item><b> Description :</b>{{item.description}} </mat-list-item>
-  </mat-list>-->
   <h3>Items - Atrium</h3>
-  <ag-grid-angular
-  style="width: 1000px; height: 500px;"
-  class="ag-theme-balham"
-  [rowData]="items"
-  [columnDefs]="columnDefs"
-  [gridOptions]= "gridOptions"
-  rowSelection="multiple"
-  >
-</ag-grid-angular>
+  <div style="height: 120px; padding: 20px;background-color: bisque;">
+    <form (ngSubmit)='onAddUpdate(addUpdateForm)' #addUpdateForm="ngForm">
+      <div class="form-row">
+        <div class="col">
+          <label>Title:</label>
+          <input type="text" class="form-control" id="title" name="title" ngModel required>
+        </div>
+        <div class="col">
+          <label>Description:</label>
+          <input type="text" class="form-control" name="description" ngModel required>
+        </div>
+        <div class="col">
+          <label>Price:</label>
+          <input type="text" class="form-control" name="price" ngModel required>
+        </div>
+        <div class="col" style="padding-top:32px;">
+          <div class="row">
+            <div class="col">
+              <button type="submit" class="btn btn-primary" style="width: 100%;"
+                [disabled]="!addUpdateForm.valid">{{actionType}}</button>
+            </div>
+            <div class="col">
+              <button type="button" class="btn btn-danger" style="width: 100%;" (click)='onResetClick()'>Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div style="padding: 20px;">
+    <ag-grid-angular style="width: 1005px; height: 500px;" class="ag-theme-balham" [rowData]="items"
+      [columnDefs]="columnDefs" [gridOptions]="gridOptions" (cellClicked)="onCellClicked($event)"
+      rowSelection="multiple">
+    </ag-grid-angular>
+  </div>
+
 
 </div>
-
-
-
-

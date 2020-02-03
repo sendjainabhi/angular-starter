@@ -13,6 +13,7 @@ import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AgGridModule } from 'ag-grid-angular';
+import {FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { AgGridModule } from 'ag-grid-angular';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AgGridModule.withComponents(),
     StoreModule.forRoot(reducers, {
       metaReducers,
