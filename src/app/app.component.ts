@@ -53,14 +53,14 @@ export class AppComponent implements OnInit {
   editCellRenderer() {
     const eGui = document.createElement('span');
     const icon = '/assets/icons/edit.png';
-    eGui.innerHTML = '<img width="20px" src="' + icon + '" />';
+    eGui.innerHTML = '<img width="20px" style="cursor: pointer;" src="' + icon + '" />';
     return eGui;
   }
 
   deleteCellRenderer() {
     const eGui = document.createElement('span');
     const icon = '/assets/icons/delete.png';
-    eGui.innerHTML = '<img width="20px" src="' + icon + '" />';
+    eGui.innerHTML = '<img width="20px" style="cursor: pointer;" src="' + icon + '" />';
     return eGui;
   }
 
@@ -79,6 +79,7 @@ export class AppComponent implements OnInit {
     } else if (this.actionType === 'Update') {
 
     }
+    this.onResetForm();
   }
 
   onCellClicked(evt) {
@@ -104,7 +105,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  onResetClick() {
+  onResetForm() {
     this.addUpdateForm.reset();
     this.actionType = 'Add';
   }
