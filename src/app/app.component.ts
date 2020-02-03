@@ -53,14 +53,14 @@ gridOptions: GridOptions;
   editCellRenderer() {
     const eGui = document.createElement('span');
     const icon = '/assets/icons/edit.png';
-    eGui.innerHTML = '<img width="20px" src="' + icon + '" />';
+    eGui.innerHTML = '<img width="20px" style="cursor: pointer;" src="' + icon + '" />';
     return eGui;
   }
 
   deleteCellRenderer() {
     const eGui = document.createElement('span');
     const icon = '/assets/icons/delete.png';
-    eGui.innerHTML = '<img width="20px" src="' + icon + '" />';
+    eGui.innerHTML = '<img width="20px" style="cursor: pointer;" src="' + icon + '" />';
     return eGui;
   }
 
@@ -70,6 +70,7 @@ gridOptions: GridOptions;
     } else if ( this.actionType === 'Update') {
       // Need to call Update service request
     }
+    this.onResetForm();
   }
 
   onCellClicked(evt) {
@@ -89,7 +90,7 @@ gridOptions: GridOptions;
     }
   }
 
-  onResetClick() {
+  onResetForm() {
     this.addUpdateForm.reset();
     this.actionType = 'Add';
   }
