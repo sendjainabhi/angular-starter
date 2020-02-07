@@ -50,8 +50,17 @@ query getallitemsQuery
 {
   items{
     title,
-    id,
     price,
+    description
+  }
+}
+`;
+
+export const GET_ALL_ITEMS_MD =  gql`
+query getallitemsQuery
+{
+  items{
+    title,
     description
   }
 }

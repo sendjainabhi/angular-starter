@@ -3,9 +3,12 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Item, DELETE_ITEM_MUTATION, CREATE_ITEM_MUTATION, UPDATE_ITEM_MUTATION, GET_ALL_ITEMS } from './items.gql';
+import { Item, DELETE_ITEM_MUTATION, CREATE_ITEM_MUTATION, UPDATE_ITEM_MUTATION, GET_ALL_ITEMS, GET_ALL_ITEMS_MD } from './items.gql';
 import { GridOptions } from 'ag-grid-community';
 import { NgForm } from '@angular/forms';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { BreakpointObserverService } from './services/breakpoint-observer.service';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-root',
@@ -13,24 +16,64 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-
+  public size$: Observable<string>;
   @ViewChild('addUpdateForm', { static: false }) addUpdateForm: NgForm;
   title = 'AngularRX';
   items: any;
+  latestSize: string;
   actionType = 'Add';
-  columnDefs = [
-    { headerName: 'Title', field: 'title' },
-    { headerName: 'Description', field: 'description' },
-    { headerName: 'Price', field: 'price' },
+  columnDefs = [];
+  cellRenderers = [
     { headerName: 'Edit', field: 'edit', cellRenderer: this.editCellRenderer, },
     { headerName: 'Delete', field: 'delete', cellRenderer: this.deleteCellRenderer, },
   ];
   gridOptions: GridOptions;
 
-  constructor(private apollo: Apollo) {
-
+  constructor(private apollo: Apollo, private breakpointObserver: BreakpointObserver,
+              private breakpointservce: BreakpointObserverService) {
+    this.size$ = breakpointservce.size$;
+    //todo: this code need to move to a service
+    this.size$.subscribe(value => {
+      this.latestSize = value;
+      if (value === 'md') {
+        this.apollo
+          .watchQuery({
+            query: GET_ALL_ITEMS_MD
+          })
+          .valueChanges.subscribe(result => {
+            this.items = result.data['items'];
+            this.columnDefs = this.generateColumns(this.items);
+            console.log(this.items);
+          });
+      }
+    });
   }
 
+  generateColumns(data: any[]) {
+    let columnDefinitions = [];
+    data.map(object => {
+      Object
+        .keys(object)
+        .map(key => {
+          if (key !== '__typename') {
+            const mappedColumn = {
+              headerName: key.toUpperCase(),
+              field: key
+            };
+            columnDefinitions.push(mappedColumn);
+          }
+
+        });
+    });
+
+    // Remove duplicate columns
+    columnDefinitions = columnDefinitions.filter((column, index, self) =>
+      index === self.findIndex((colAtIndex) => (
+        colAtIndex.field === column.field
+      ))
+    );
+    return columnDefinitions;
+  }
   ngOnInit() {
     this.apollo
       .watchQuery({
@@ -38,6 +81,11 @@ export class AppComponent implements OnInit {
       })
       .valueChanges.subscribe(result => {
         this.items = result.data['items'];
+        this.columnDefs = this.generateColumns(this.items);
+        this.cellRenderers.forEach(element => {
+          this.columnDefs.push(element);
+        }
+        );
         console.log(this.items);
       });
   }
@@ -74,7 +122,7 @@ export class AppComponent implements OnInit {
       this.apollo.mutate<any>({
         mutation: UPDATE_ITEM_MUTATION,
         variables: {
-          id:"5e3890ff5942863f5c9daf50",
+          id: '5e3890ff5942863f5c9daf50',
           title: form.value.title,
           price: parseInt(form.value.price),
           description: form.value.description

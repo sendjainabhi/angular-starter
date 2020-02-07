@@ -14,7 +14,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AgGridModule } from 'ag-grid-angular';
 import {FormsModule } from '@angular/forms';
-
+import {LayoutModule} from '@angular/cdk/layout';
+import { BreakpointObserverService } from './services/breakpoint-observer.service';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {FormsModule } from '@angular/forms';
   ],
   imports: [
     BrowserModule,
+    LayoutModule,
     FormsModule,
     AgGridModule.withComponents(),
     StoreModule.forRoot(reducers, {
@@ -41,7 +43,8 @@ import {FormsModule } from '@angular/forms';
     MatCardModule,
     NoopAnimationsModule
   ],
-  providers: [],
+  providers:    [ BreakpointObserverService ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }
