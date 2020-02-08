@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   @ViewChild('addUpdateForm', { static: false }) addUpdateForm: NgForm;
   title = 'AngularRX';
   items: any;
+  slectedItem: any;
   latestSize: string;
   actionType = 'Add';
   columnDefs = [];
@@ -122,7 +123,7 @@ export class AppComponent implements OnInit {
       this.apollo.mutate<any>({
         mutation: UPDATE_ITEM_MUTATION,
         variables: {
-          id: '5e3890ff5942863f5c9daf50',
+          id: this.slectedItem.id,
           title: form.value.title,
           price: parseInt(form.value.price),
           description: form.value.description
@@ -152,6 +153,7 @@ export class AppComponent implements OnInit {
         });
         break;
       case 'edit':
+        this.slectedItem = evt.data;
         this.addUpdateForm.setValue({
           title: evt.data.title,
           description: evt.data.description,

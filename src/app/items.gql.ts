@@ -49,6 +49,7 @@ export const GET_ALL_ITEMS =  gql`
 query getallitemsQuery
 {
   items{
+    id,
     title,
     price,
     description
