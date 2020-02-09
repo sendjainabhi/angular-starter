@@ -25,8 +25,8 @@ export class AppComponent implements OnInit {
   actionType = 'Add';
   columnDefs = [];
   cellRenderers = [
-    { headerName: 'Edit', field: 'edit', cellRenderer: this.editCellRenderer, cellStyle: { 'text-align': 'center' }, width: 80, },
-    { headerName: 'Delete', field: 'delete', cellRenderer: this.deleteCellRenderer, cellStyle: { 'text-align': 'center'}, width: 80, },
+    { headerName: 'EDIT', field: 'edit', cellRenderer: this.editCellRenderer, cellStyle: { 'text-align': 'center' }, width: 80},
+    { headerName: 'DELETE', field: 'delete', cellRenderer: this.deleteCellRenderer, cellStyle: { 'text-align': 'center'}, width: 80, },
   ];
   gridOptions: GridOptions;
 
@@ -35,12 +35,11 @@ export class AppComponent implements OnInit {
     this.size$ = breakpointservce.size$;
   }
 
-
   generateColumns(items: any[]) {
     let columnDefinitions = [];
     // tslint:disable-next-line: forin
     for (const key in items[0]) {
-      if (key !== '__typename') {
+      if (key !== '__typename' && key !== 'id') {
         const mappedColumn = {
           headerName: key.toUpperCase(),
           field: key
@@ -64,9 +63,16 @@ export class AppComponent implements OnInit {
       .valueChanges.subscribe(result => {
         this.items = result.data['items'];
         this.columnDefs = this.generateColumns(this.items);
-        this.columnDefs = [...this.columnDefs, ...this.cellRenderers];
-        this.itemsGrid.gridOptions.api.setColumnDefs(this.columnDefs );
+        this.initGridColumns();
       });
+  }
+
+  initGridColumns() {
+    this.itemsGrid.gridOptions.api.setColumnDefs(this.columnDefs );
+    setTimeout(() => {
+      this.columnDefs = [...this.columnDefs, ...this.cellRenderers];
+      this.itemsGrid.gridOptions.api.setColumnDefs(this.columnDefs );
+     }, 100);
   }
 
   editCellRenderer() {
