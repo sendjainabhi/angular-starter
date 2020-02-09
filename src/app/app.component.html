@@ -1,6 +1,6 @@
 <div class="wrapper" fxLayout="column" fxLayoutAlign="start stretch">
-  <h3>Items - Atrium</h3>
-  <div style="height: 120px; padding: 20px;background-color: bisque;">
+  <header>Atrium - POC</header>
+  <div style="height: 120px; padding: 20px;background-color: rgb(250, 244, 239);">
     <form (ngSubmit)='onAddUpdate(addUpdateForm)' #addUpdateForm="ngForm">
       <div class="form-row">
         <div class="col">
@@ -30,10 +30,14 @@
     </form>
   </div>
   <div style="padding: 20px;">
-    <ag-grid-angular #itemsGrid style="width: 1500px; height: 500px;" class="ag-theme-balham" [rowData]="items"
+    <ag-grid-angular #itemsGrid style="height: 400px;" class="ag-theme-balham" [rowData]="items"
       [gridOptions]="gridOptions" (cellClicked)="onCellClicked($event)" rowSelection="multiple">
     </ag-grid-angular>
   </div>
-  <div>{{size$ | async}}</div>
+  <!-- <div>{{size$ | async}}</div> -->
+
+  <footer>
+    <p>©2020 Cognizant, all rights reserved</p>
+  </footer>
 
 </div>

@@ -72,7 +72,9 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       this.columnDefs = [...this.columnDefs, ...this.cellRenderers];
       this.itemsGrid.gridOptions.api.setColumnDefs(this.columnDefs );
+      this.itemsGrid.gridOptions.api.sizeColumnsToFit();
      }, 100);
+    
   }
 
   editCellRenderer() {
