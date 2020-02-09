@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Item, DELETE_ITEM_MUTATION, CREATE_ITEM_MUTATION, UPDATE_ITEM_MUTATION, GET_ALL_ITEMS, GET_ALL_ITEMS_MD } from './items.gql';
+import { Observable } from 'rxjs';
+import {  DELETE_ITEM_MUTATION, CREATE_ITEM_MUTATION, UPDATE_ITEM_MUTATION, GET_ALL_ITEMS, GET_ALL_ITEMS_MD } from './items.gql';
 import { GridOptions } from 'ag-grid-community';
 import { NgForm } from '@angular/forms';
-import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { BreakpointObserverService } from './services/breakpoint-observer.service';
-import { async } from '@angular/core/testing';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +17,7 @@ import { async } from '@angular/core/testing';
 export class AppComponent implements OnInit {
   public size$: Observable<string>;
   @ViewChild('addUpdateForm', { static: false }) addUpdateForm: NgForm;
+  @ViewChild('itemsGrid', { static: false }) itemsGrid: AgGridAngular;
   title = 'AngularRX';
   items: any;
   slectedItem: any;
@@ -25,57 +25,38 @@ export class AppComponent implements OnInit {
   actionType = 'Add';
   columnDefs = [];
   cellRenderers = [
-    { headerName: 'Edit', field: 'edit', cellRenderer: this.editCellRenderer, },
-    { headerName: 'Delete', field: 'delete', cellRenderer: this.deleteCellRenderer, },
+    { headerName: 'Edit', field: 'edit', cellRenderer: this.editCellRenderer, cellStyle: { 'text-align': 'center' }, width: 80, },
+    { headerName: 'Delete', field: 'delete', cellRenderer: this.deleteCellRenderer, cellStyle: { 'text-align': 'center'}, width: 80, },
   ];
   gridOptions: GridOptions;
 
   constructor(private apollo: Apollo, private breakpointObserver: BreakpointObserver,
               private breakpointservce: BreakpointObserverService) {
     this.size$ = breakpointservce.size$;
-    //todo: this code need to move to a service
-    this.size$.subscribe(value => {
-      this.latestSize = value;
-      if (value === 'md') {
-        this.apollo
-          .watchQuery({
-            query: GET_ALL_ITEMS_MD
-          })
-          .valueChanges.subscribe(result => {
-            this.items = result.data['items'];
-            this.columnDefs = this.generateColumns(this.items);
-            console.log(this.items);
-          });
-      }
-    });
   }
 
-  generateColumns(data: any[]) {
+
+  generateColumns(items: any[]) {
     let columnDefinitions = [];
-    data.map(object => {
-      Object
-        .keys(object)
-        .map(key => {
-          if (key !== '__typename') {
-            const mappedColumn = {
-              headerName: key.toUpperCase(),
-              field: key
-            };
-            columnDefinitions.push(mappedColumn);
-          }
-
-        });
-    });
-
-    // Remove duplicate columns
-    columnDefinitions = columnDefinitions.filter((column, index, self) =>
-      index === self.findIndex((colAtIndex) => (
-        colAtIndex.field === column.field
-      ))
-    );
+    // tslint:disable-next-line: forin
+    for (const key in items[0]) {
+      if (key !== '__typename') {
+        const mappedColumn = {
+          headerName: key.toUpperCase(),
+          field: key
+        };
+        columnDefinitions.push(mappedColumn);
+      }
+    }
     return columnDefinitions;
   }
+
   ngOnInit() {
+    this.showColumnsByWindowSize();
+    this.getAllItems();
+  }
+
+  getAllItems() {
     this.apollo
       .watchQuery({
         query: GET_ALL_ITEMS
@@ -83,13 +64,11 @@ export class AppComponent implements OnInit {
       .valueChanges.subscribe(result => {
         this.items = result.data['items'];
         this.columnDefs = this.generateColumns(this.items);
-        this.cellRenderers.forEach(element => {
-          this.columnDefs.push(element);
-        }
-        );
-        console.log(this.items);
+        this.columnDefs = [...this.columnDefs, ...this.cellRenderers];
+        this.itemsGrid.gridOptions.api.setColumnDefs(this.columnDefs );
       });
   }
+
   editCellRenderer() {
     const eGui = document.createElement('span');
     const icon = '/assets/icons/edit.png';
@@ -118,7 +97,6 @@ export class AppComponent implements OnInit {
         }]
       }).subscribe((response) => {
       });
-      // Need to call Add service request
     } else if (this.actionType === 'Update') {
       this.apollo.mutate<any>({
         mutation: UPDATE_ITEM_MUTATION,
@@ -168,6 +146,23 @@ export class AppComponent implements OnInit {
   onResetForm() {
     this.addUpdateForm.reset();
     this.actionType = 'Add';
+  }
+
+  showColumnsByWindowSize() {
+    this.size$.subscribe(value => {
+      this.latestSize = value;
+      if (value === 'md') {
+        this.apollo
+          .watchQuery({
+            query: GET_ALL_ITEMS_MD
+          })
+          .valueChanges.subscribe(result => {
+            this.items = result.data['items'];
+            this.columnDefs = this.generateColumns(this.items);
+            console.log(this.items);
+          });
+      }
+    });
   }
 
 }

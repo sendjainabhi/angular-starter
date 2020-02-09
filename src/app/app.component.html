@@ -30,9 +30,8 @@
     </form>
   </div>
   <div style="padding: 20px;">
-    <ag-grid-angular style="width: 1500px; height: 500px;" class="ag-theme-balham" [rowData]="items"
-      [columnDefs]="columnDefs" [gridOptions]="gridOptions" (cellClicked)="onCellClicked($event)"
-      rowSelection="multiple">
+    <ag-grid-angular #itemsGrid style="width: 1500px; height: 500px;" class="ag-theme-balham" [rowData]="items"
+      [gridOptions]="gridOptions" (cellClicked)="onCellClicked($event)" rowSelection="multiple">
     </ag-grid-angular>
   </div>
   <div>{{size$ | async}}</div>
