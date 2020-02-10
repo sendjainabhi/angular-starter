@@ -23,7 +23,13 @@ export class AppComponent implements OnInit {
   slectedItem: any;
   latestSize: string;
   actionType = 'Add';
-  columnDefs = [];
+  columnDefs = [
+    {headerName: 'Title', field: 'make',breakpoint: '[xs | sm | md | lg | xl]' , editable: true},
+    {headerName: 'Description', field: 'model' ,breakpoint: '[xs | sm | md | lg | xl]' ,editable: true},
+    {headerName: 'Price', field: 'price' ,breakpoint: '[xs | sm | md | lg | xl]' ,editable: true}
+];
+  
+rowData = [];
   cellRenderers = [
     { headerName: 'EDIT', field: 'edit', cellRenderer: this.editCellRenderer, cellStyle: { 'text-align': 'center' }, width: 80},
     { headerName: 'DELETE', field: 'delete', cellRenderer: this.deleteCellRenderer, cellStyle: { 'text-align': 'center'}, width: 80, },
@@ -53,6 +59,10 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.showColumnsByWindowSize();
     this.getAllItems();
+
+    fetch('https://api.myjson.com/bins/15psn9')
+    .then(result => result.json())
+    .then(rowData => this.rowData = rowData);
   }
 
   getAllItems() {
